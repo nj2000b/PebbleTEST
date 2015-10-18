@@ -1,4 +1,4 @@
-//METEO
+//METEO PREMIER PRGD
 var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
@@ -14,7 +14,6 @@ var win1 = new UI.Window({
   fullscreen: true, 
   scrollable: true
 });
-
 
 var weekday = ['Dimanche', 'Lundi', 'Mardi', 'Mercedi',
                'Jeudi', 'Vendredi', 'Samedi'];
