@@ -4,6 +4,20 @@ var ajax = require('ajax');
 var Vector2 = require('vector2');
 var Light = require('ui/light');
 
+var colorTemp="orange";
+var colorRain="blue";
+var colorTime="black";
+var colorIcon="white";
+
+  var maxX=144;
+  var shiftY=55;//Shift global en Y pour metre un titre
+  var posTempX=0;
+  var posTempY=0; 
+
+var cityName = 'meylan';
+
+
+
 Light.on();
 // Create a Card with title and subtitle
 var card = new UI.Card({
@@ -12,16 +26,17 @@ var card = new UI.Card({
 });
 var win1 = new UI.Window({
   fullscreen: true, 
-  scrollable: true
+  scrollable: true,
+  backgroundColor: 'white',
 });
 
 var weekday = ['Dimanche', 'Lundi', 'Mardi', 'Mercedi',
                'Jeudi', 'Vendredi', 'Samedi'];
+var tailleLigne=25;
  
 // Display the Card
 card.show();
 // Construct URL
-var cityName = 'paris';
 var URL = 'http://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&APPID=7efa723577fa1eea8728bfa0b3ec24a2';
 //var URL = 'http://api.openweathermap.org/data/2.5/forecast?q=grenoble&APPID=7efa723577fa1eea8728bfa0b3ec24a2&mode=json';
 
@@ -43,6 +58,7 @@ ajax(
   var jour=[];
   var temp=[];
   var rain=[];
+  var rainMax=0;
   var minTemp=500;
   var maxTemp=-500;
   console.log("Rentree dans la boucle");
@@ -59,7 +75,8 @@ ajax(
           {
           rainTmp = Math.round(data.list[i].rain['3h']*10)/10;
           }
-        }       
+        }      
+      if (rainTmp>rainMax) {rainMax=rainTmp;}
       console.log("  rain=..."+rainTmp);
       rain.push(rainTmp); 
       console.log("  rain FINISHED");
@@ -71,18 +88,16 @@ ajax(
       card.subtitle("METEO ALEX");
       // CREATION DU MENU
       var icnTemps2=data.list[i].weather[0].icon.substring(0,2)+'d';
+      var pluie="No rain";
+      if (rainTmp>0) {pluie=rainTmp+"mm";}
       items.push({
-        title:time[i]+"h00 "+jour[i],
-        subtitle:temp[i]+" oC / "+rain[i]+" mm",
+        title:time[i]+"h00 "+jour[i].substring(0,3),
+        subtitle:temp[i]+" C | "+pluie,
         icon: "images/"+icnTemps2+".png",
           });
       }
   console.log("MaxTemp="+maxTemp);
   console.log("MinTemp="+minTemp);
-  var maxX=144;
-  var shiftY=40;//Shift global en Y pour metre un titre
-  var posTempX=0;
-  var posTempY=0; 
 // AJOUT DE L'ENTETE 
 
     
@@ -90,9 +105,8 @@ ajax(
         position: new Vector2(0, 0),
         size: new Vector2(maxX, 21),
         font: 'gothic-18-bold',
-        //text: "Meteo Alex",
         textAlign: 'left',
-        backgroundColor: 'white'
+        backgroundColor: 'red'
         });
     win1.add(txtEntete1Rect);
     
@@ -102,27 +116,27 @@ ajax(
         font: 'gothic-18-bold',
         text: "Meteo Alex",
         textAlign: 'left',
-        color: 'blue'
+        color: 'black'
         });
     win1.add(txtEntete1);
     
   var txtEntete2 = new UI.Text({
        position: new Vector2(0, 20),
         size: new Vector2(90, 10),
-        font: 'gothic-14',
-        text: "Pluie (mm)",
+        font: 'gothic-18-bold',
+        text: "Pluie(mm)",
         textAlign: 'left',
-        color:'blue'
+        color:colorRain
         });
     win1.add(txtEntete2);
     
   var txtEntete3 = new UI.Text({
         position: new Vector2(70, 20),
         size: new Vector2(144-70, 10),
-        font: 'gothic-14',
-        text: "Temp (oC)",
+        font: 'gothic-18-bold',
+        text: "Temp(C)",
         textAlign: 'right',
-        color:'yellow',
+        color:colorTemp,
         });
     win1.add(txtEntete3);
     
@@ -133,65 +147,61 @@ ajax(
         
         // Texte heure
         var txtTime=time[i]+"h00";
+        var varBold="";
         if (i===0) 
-          {txtTime=jour[i].substring(0,3)+" "+time[i]+"h00";} 
+          {txtTime=jour[i].substring(0,3)+" "+time[i]+"h";
+          varBold="-bold";} 
         else
           {if (time[i]<time[i-1])
-            {txtTime=jour[i].substring(0,3)+" "+time[i]+"h00";}
+            {txtTime=jour[i].substring(0,3)+" "+time[i]+"h";
+            varBold="-bold";}
           }
         // Texte heure
         var xHeure= new UI.Text({
         position: new Vector2(2, posTempY+shiftY),
         size: new Vector2(90, 10),
-        font: 'gothic-14',
+        font: 'gothic-18'+varBold,
         text: txtTime,
         textAlign: 'left',
+        color:colorTime,
         });
-        
+        varBold="";
         //texte Temperature
-        posTempX=maxX-Math.round((temp[i]-minTemp)/(maxTemp-minTemp)*50);
+        posTempX=Math.round((temp[i]-minTemp)/(maxTemp-minTemp)*40);
+        console.log("POSTEMPX="+posTempX);
         var xTemp = new UI.Text({
-        position: new Vector2(posTempX-30, posTempY+shiftY+15),
+        position: new Vector2(maxX-30, posTempY+shiftY),
         size: new Vector2(30, 10),
-        font: 'gothic-14',
+        font: 'gothic-18-bold',
         text: temp[i],
         textAlign: 'right',
-          color: 'yellow'
+        color: colorTemp
         });
         
         // Barre Temperature principale
        var rectTemp=new UI.Rect({
-            position: new Vector2(posTempX,posTempY+shiftY+15+10),
-            size: new Vector2(144,1),
-            borderColor: 'yellow',
-            backgroundColor: 'white'
+            position: new Vector2(maxX-27,posTempY+shiftY+7),
+            size: new Vector2(-posTempX,10),
+            borderColor: colorTemp,
+            backgroundColor: colorTemp,
             });
         //Barre Temperature secondaire
-        var posTempX2=(posTempX+(maxX-Math.round((temp[i+1]-minTemp)/(maxTemp-minTemp)*50)))/2;
+        var posTempX2=(posTempX+Math.round((temp[i+1]-minTemp)/(maxTemp-minTemp)*40))/2;
         var rectTemp2=new UI.Rect({
-            position: new Vector2(posTempX2,posTempY+shiftY+15+10+15),
-            size: new Vector2(144,1),
-            borderColor: 'yellow',
-            backgroundColor: 'white'
+            position: new Vector2(maxX-27,posTempY+shiftY+7+tailleLigne/2+1),
+            size: new Vector2(-posTempX2,10),
+            borderColor: colorTemp,
+            backgroundColor: colorTemp
             });
        
-       // Texte de la Pluie
-        var xRain = new UI.Text({
-        position: new Vector2(35, posTempY+shiftY+15),
-        size: new Vector2(40, 10),
-        font: 'gothic-14',
-        text: rain[i],
-        textAlign: 'left',
-        color: 'blue'
-        });
         // Icone Temps
         var icnTemps=data.list[i].weather[0].icon.substring(0,2)+'d';
-          var imgRain16 = new UI.Image({
-          position: new Vector2(65,posTempY+shiftY+16),
-          size: new Vector2(16,16),
-          borderColor: 'grey',
-          image: 'images/'+icnTemps+'.png',
-          });
+        var imgRain16 = new UI.Image({
+        position: new Vector2(57,posTempY+shiftY+5),
+        size: new Vector2(16,16),
+        borderColor: colorIcon,
+        image: 'images/'+icnTemps+'.png',
+        });
         console.log("image :"+icnTemps);
         
         //rectangle de la Pluie
@@ -201,32 +211,50 @@ ajax(
             valRain=0;} else 
           {
             valRain=rain[i];
-            if (valRain*2>20) {valRain=10;}
+            //Position texte + barres de RAIN
+            var posRainX=(valRain/rainMax)*40+1;
+            // BARRE DE LA PLUIE
             var rectPluie=new UI.Rect({
-            position: new Vector2(1,posTempY+shiftY+10+5+20-Math.ceil(valRain)*3),
-            size: new Vector2(15, Math.ceil(valRain)*3),
+            position: new Vector2(1+15, posTempY+shiftY-5),
+            size: new Vector2(posRainX, 10),
             borderColor: 'blue',
             backgroundColor: 'blue'
             });
-            //win1.add(rectPluie);
-            var circlePluie=new UI.Rect({
-            position: new Vector2(10,posTempY+shiftY+10+5+10-Math.ceil(valRain)*3),
-            radius: Math.ceil(valRain)*2,
-            borderColor: 'blue',
-            backgroundColor: 'blue'
-            });
-            win1.add(circlePluie);
+            win1.add(rectPluie);
+            console.log("VAL RAIN="+Math.ceil(valRain*10));
+           
+            // Texte de la Pluie
+           if (valRain===0) {valRain=" <0.05";}
+           var xRain = new UI.Text({
+           position: new Vector2(posRainX+15+2, posTempY+shiftY-10),
+           size: new Vector2(90, 10),
+           font: 'gothic-14',
+           text: valRain,
+           textAlign: 'left',
+           color: colorRain
+           });
+           win1.add(xRain);
 
-          }
+            }
+         // Cercle JOUR/NUIT
+            var dayNight="white";
+            if (time[i]>23||time[i]<9) {dayNight="black";}
+            var circleDayNight=new UI.Circle({
+            position: new Vector2(7,posTempY+shiftY-10+10),
+            radius: 4,
+            borderColor: 'black',
+            backgroundColor: dayNight,
+            });
+            win1.add(circleDayNight);
+            //win1.add(circlePluie);
 
       posTempX =0; 
-      posTempY += 30;
+      posTempY += tailleLigne;
 
       win1.add(xTemp);
       win1.add(rectTemp);
       win1.add(rectTemp2);
       win1.add(xHeure);
-      win1.add(xRain);
       win1.add(imgRain16);
       } // Fin du for
 
@@ -237,25 +265,29 @@ ajax(
     var resultsMenu = new UI.Menu({
       textColor: 'blue',
       highlightBackgroundColor: 'blue',
-      highlightTextColor: 'red',
+      highlightTextColor: 'white',
       sections: [{
         title: 'Meteo Alex',
         items: menuItems
       }]
     });
     
-      win1.on('select', function(e) {
-      console.log('SELECT => go to Menu');
-      resultsMenu.show();
+    resultsMenu.show();
+
+    
+    win1.on('click', 'select', function(e) {
+    console.log('SELECT => go to Menu');
+    resultsMenu.show();
     });
     //resultsMenu.show();
-    resultsMenu.show();
-    card.hide();
+
     // Add an action for SELECT
     resultsMenu.on('select', function(e) {
-      console.log('SELECT => go to win1');
-      win1.show(); 
+    console.log('SELECT => go to win1');
+    win1.show(); 
     });
+
+
 
 
   },
@@ -264,3 +296,4 @@ ajax(
     console.log('Impossible de recuperer les donnees ! ' + error);
   }
 );
+
