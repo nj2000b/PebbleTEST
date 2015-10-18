@@ -1,4 +1,4 @@
-//METEO PREMIER PRGD
+//METEO PREMIER PRGD et voila
 var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
