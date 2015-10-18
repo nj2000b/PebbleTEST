@@ -1,4 +1,4 @@
-//METEO PREMIER PRGD et voila VERSION CP
+//METEO PREMIER PRGD et voila VERSION CP2
 var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
