@@ -1,4 +1,4 @@
-//METEO PREMIER PRGD et voila
+//METEO PREMIER PRGD et voila MOK
 var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
