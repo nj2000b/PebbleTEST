@@ -1,0 +1,82 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        "configurable"
+    ],
+    "companyName": "nj2000.pub@gmail.com",
+    "longName": "METEO2",
+    "projectType": "pebblejs",
+    "resources": {
+        "media": [
+            {
+                "file": "images/menu_icon.png",
+                "menuIcon": true,
+                "name": "IMAGE_MENU_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/logo_splash.png",
+                "name": "IMAGE_LOGO_SPLASH",
+                "type": "png"
+            },
+            {
+                "file": "images/tile_splash.png",
+                "name": "IMAGE_TILE_SPLASH",
+                "type": "png"
+            },
+            {
+                "file": "fonts/UbuntuMono-Regular.ttf",
+                "name": "MONO_FONT_14",
+                "type": "font"
+            },
+            {
+                "file": "images/02d.png",
+                "name": "IMAGES_02D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/01d.png",
+                "name": "IMAGES_01D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/09d.png",
+                "name": "IMAGES_09D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/04d.png",
+                "name": "IMAGES_04D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/03d.png",
+                "name": "IMAGES_03D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/11d.png",
+                "name": "IMAGES_11D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/10d.png",
+                "name": "IMAGES_10D_PNG",
+                "type": "png"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "METEO2",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "uuid": "2458ea27-8537-473c-9c03-0021727b4809",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "hiddenApp": false,
+        "watchface": false
+    }
+}
