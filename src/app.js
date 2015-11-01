@@ -4,7 +4,11 @@ var tempUnit=localStorage.getItem('temp');
 var lang=localStorage.getItem('lang');
 
 console.log("VILLE AVANT"+city);
-city=city.replace(/\s/g,"");
+if (typeof city != 'undefined' && city !==null){
+  city=city.replace(/\s/g,"");
+} else {
+  city="";
+}
 console.log("VILLE apres"+city);
 
 

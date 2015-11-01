@@ -4,7 +4,7 @@
         "configurable"
     ],
     "companyName": "nj2000.pub@gmail.com",
-    "longName": "METEO2",
+    "longName": "METEO CLEAR",
     "projectType": "pebblejs",
     "resources": {
         "media": [
@@ -67,7 +67,7 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "METEO2",
+    "shortName": "METEO CLEAR",
     "targetPlatforms": [
         "aplite",
         "basalt"
