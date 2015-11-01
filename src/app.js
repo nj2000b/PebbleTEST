@@ -1,8 +1,67 @@
+//options de configuration 
+var city=localStorage.getItem('city');
+var tempUnit=localStorage.getItem('temp');
+var lang=localStorage.getItem('lang');
+
+console.log("VILLE AVANT"+city);
+city=city.replace(/\s/g,"");
+console.log("VILLE apres"+city);
+
+
+
+
+
+//Page de configuration :
+Pebble.addEventListener('showConfiguration', function(e) {
+  // Show config page
+  Pebble.openURL('http://nj2000.pebble.free.fr/index.html');
+});
+
+//A la fermeture de la configuration (SUBMIT) :
+Pebble.addEventListener('webviewclosed', function(e) {
+  // Decode and parse config data as JSON
+  var config_data = JSON.parse(decodeURIComponent(e.response));
+  console.log('XXXXXXConfig window returned: ', JSON.stringify(config_data));
+//  console.log('XXX VALEUR STOCKEE :'+localStorage['high_contrast']+' bgn color:'+localStorage.background_color);
+
+  // Prepare AppMessage payload
+  city=config_data.city;
+  lang=config_data.lang;
+  tempUnit=config_data.temp;
+  localStorage.setItem('temp',tempUnit);
+  localStorage.setItem('city',city);
+  localStorage.setItem('lang',lang);
+  });
+  
+                        /*
+  localStorage.setItem('t1', "toto1");
+  localStorage.setItem('t2',"toto2");
+      console.log('APP sotoarge2 '+ localStorage.getItem('t1')+localStorage.getItem('t2'));
+      console.log('APP sotoarge3 '+ localStorage.getItem(3));
+*/
+  
+  
+
+  
+  
+  
+
+  // Send settings to Pebble watchapp
+  /*
+  Pebble.sendAppMessage(dict, function(){
+    console.log('Sent config data to Pebble');  
+  }, function() {
+    console.log('Failed to send config data!');
+  });
+  */
+
+
+
 //METEO PREMIER PRGD et voila VERSION CP2
 var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
-var Light = require('ui/light');
+//var Light = require('ui/light');
 
 var colorTemp="orange";
 var colorRain="blue";
@@ -14,24 +73,45 @@ var colorIcon="white";
   var posTempX=0;
   var posTempY=0; 
 
-var cityName = 'meylan';
+var cityName = city;
 
 
+//Regarde si il y a une ville
+var noCity="No city found";
+if (lang=="fr") {noCity="Pas de ville";}
+var addCity="Enter a valid city name";
+if (lang=="fr") {addCity="Entrez une ville correcte";}
+var explainCity="Go to the pebble app on your phone and press the configuration button for this app to enter the city. Then start again the app";
+if (lang=="fr") {explainCity="Allez dans l'application Pebble de votre telephone et configurer l'application meteo. Relancez ensuite l'appication";}
 
-Light.on();
+var card_settings=new UI.Card({
+  title : noCity,
+  body : explainCity
+});
+
+if (city.length<2 || typeof city == 'undefined') {
+  card_settings.show();
+}
+
+//Light.on();
 // Create a Card with title and subtitle
+var loading="loading...";
+if (lang=="fr") {loading="chargement...";}
 var card = new UI.Card({
   title:'METEO Alex',
-  subtitle:'Chargement...'
+  subtitle:loading
 });
+
 var win1 = new UI.Window({
   fullscreen: true, 
   scrollable: true,
   backgroundColor: 'white',
 });
 
-var weekday = ['Dimanche', 'Lundi', 'Mardi', 'Mercedi',
-               'Jeudi', 'Vendredi', 'Samedi'];
+var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
+               'Thursday', 'Friday', 'Saterday'];
+if (lang=="fr") {weekday=['Dimanche', 'Lundi', 'Mardi', 'Mercedi',
+               'Jeudi', 'Vendredi', 'Samedi'];}
 var tailleLigne=25;
  
 // Display the Card
@@ -41,6 +121,24 @@ var URL = 'http://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&AP
 //var URL = 'http://api.openweathermap.org/data/2.5/forecast?q=grenoble&APPID=7efa723577fa1eea8728bfa0b3ec24a2&mode=json';
 
 // 144*168
+
+
+//Regarde si il y a une ville
+var noCity="No city found";
+if (lang=="fr") {noCity="Pas de ville";}
+var addCity="Enter a valid city name";
+if (lang=="fr") {addCity="Entrez une ville correcte";}
+var explainCity="Go to the pebble app on your phone and press the configuration button for this app to enter the city. Then start again the app";
+if (lang=="fr") {explainCity="Allez dans l'application Pebble de votre telephone et configurer l'application meteo. Relancez ensuite l'appication";}
+
+var card_settings=new UI.Card({
+  title : noCity,
+  body : explainCity
+});
+
+if (city.length<2 || typeof city == 'undefined') {
+  card_settings.show();
+}
 
 ajax(
   {
@@ -53,6 +151,8 @@ ajax(
   // Extract data
   // var location = data.list[0].main.temp;
   var nb_info = data.cnt ;
+  var cityReturned=data.city.name;
+  var countryReturned=data.city.country;
   var items = [];
   var time=[];
   var jour=[];
@@ -63,8 +163,14 @@ ajax(
   var maxTemp=-500;
   console.log("Rentree dans la boucle");
   for (var i=0;i<nb_info;i++)
-    {
-      temp.push(Math.round((data.list[i].main.temp-273.15)*10)/10);
+    {  
+      console.log("TEMP EST EN :"+tempUnit);
+      var temp_tmp=data.list[i].main.temp-273.15;
+      if (tempUnit == "fah") {temp_tmp=temp_tmp*1.8+32;}
+      if (tempUnit == "fah") {console.log("FAHRENEIT");}
+      if (tempUnit == "cel") {console.log("CELSIUS");}
+      temp.push(Math.round(temp_tmp*10)/10);
+    //  temp.push(Math.round((data.list[i].main.temp-273.15)*10)/10);
       // Caclucl min et max temp
       if (temp[i]>maxTemp) {maxTemp=temp[i];}
       if (temp[i]<minTemp) {minTemp=temp[i];}
@@ -89,9 +195,10 @@ ajax(
       // CREATION DU MENU
       var icnTemps2=data.list[i].weather[0].icon.substring(0,2)+'d';
       var pluie="No rain";
+      if (lang=="fr") {pluie="Sec";}
       if (rainTmp>0) {pluie=rainTmp+"mm";}
       items.push({
-        title:time[i]+"h00 "+jour[i].substring(0,3),
+        title:jour[i].substring(0,3)+" "+time[i]+"h00",
         subtitle:temp[i]+" C | "+pluie,
         icon: "images/"+icnTemps2+".png",
           });
@@ -111,30 +218,34 @@ ajax(
     win1.add(txtEntete1Rect);
     
   var txtEntete1 = new UI.Text({
-        position: new Vector2(40, 0),
-        size: new Vector2(90, 10),
+        position: new Vector2(0, 0),
+        size: new Vector2(144, 10),
         font: 'gothic-18-bold',
-        text: "Meteo Alex",
-        textAlign: 'left',
+        text: cityReturned+","+countryReturned,
+        textAlign: 'center',
         color: 'black'
         });
     win1.add(txtEntete1);
-    
+   
+  var txtRain="rain(mm)";
+  if (lang=="fr") {txtRain="pluie(mm)";}
   var txtEntete2 = new UI.Text({
        position: new Vector2(0, 20),
         size: new Vector2(90, 10),
         font: 'gothic-18-bold',
-        text: "Pluie(mm)",
+        text: txtRain,
         textAlign: 'left',
         color:colorRain
         });
     win1.add(txtEntete2);
-    
+   
+  var txtTemp="Temp(C)";
+    if (tempUnit=="fah") {txtTemp="Temp(F)";}
   var txtEntete3 = new UI.Text({
         position: new Vector2(70, 20),
         size: new Vector2(144-70, 10),
         font: 'gothic-18-bold',
-        text: "Temp(C)",
+        text:txtTemp,
         textAlign: 'right',
         color:colorTemp,
         });
@@ -148,13 +259,15 @@ ajax(
         // Texte heure
         var txtTime=time[i]+"h00";
         var varBold="";
-        if (i===0) 
+        if (i===0) //prmier element
           {txtTime=jour[i].substring(0,3)+" "+time[i]+"h";
           varBold="-bold";} 
-        else
-          {if (time[i]<time[i-1])
-            {txtTime=jour[i].substring(0,3)+" "+time[i]+"h";
-            varBold="-bold";}
+        else 
+          {if (time[i]<time[i-1]) //Si on chjangde de jour
+            {
+            txtTime=jour[i].substring(0,3)+" "+time[i]+"h";
+            varBold="-bold";
+            }
           }
         // Texte heure
         var xHeure= new UI.Text({
@@ -180,7 +293,7 @@ ajax(
         
         // Barre Temperature principale
        var rectTemp=new UI.Rect({
-            position: new Vector2(maxX-27,posTempY+shiftY+7),
+            position: new Vector2(maxX-28,posTempY+shiftY+7),
             size: new Vector2(-posTempX,10),
             borderColor: colorTemp,
             backgroundColor: colorTemp,
@@ -188,7 +301,7 @@ ajax(
         //Barre Temperature secondaire
         var posTempX2=(posTempX+Math.round((temp[i+1]-minTemp)/(maxTemp-minTemp)*40))/2;
         var rectTemp2=new UI.Rect({
-            position: new Vector2(maxX-27,posTempY+shiftY+7+tailleLigne/2+1),
+            position: new Vector2(maxX-28,posTempY+shiftY+7+tailleLigne/2+1),
             size: new Vector2(-posTempX2,10),
             borderColor: colorTemp,
             backgroundColor: colorTemp
@@ -248,22 +361,33 @@ ajax(
             win1.add(circleDayNight);
             //win1.add(circlePluie);
 
-      posTempX =0; 
-      posTempY += tailleLigne;
 
       win1.add(xTemp);
       win1.add(rectTemp);
       win1.add(rectTemp2);
       win1.add(xHeure);
       win1.add(imgRain16);
+        // Ligne separatrice des jours
+      if (time[i]<time[i-1]) //Si on chjangde de jour
+            {
+            var lineDay = new UI.Rect({
+              position:new Vector2(0,posTempY+shiftY+5),
+              size:new Vector2(maxX,2),
+              borderColor: 'black',
+              backgroundColor: 'black',});
+              win1.add(lineDay);
+            }
+      
+      posTempX =0; 
+      posTempY += tailleLigne;
       } // Fin du for
 
-    card.subtitle('Finished !');
+    card.hide();
 
     // Construct Menu to show to user
     var menuItems = items;
     var resultsMenu = new UI.Menu({
-      textColor: 'blue',
+      textColor: 'red',
       highlightBackgroundColor: 'blue',
       highlightTextColor: 'white',
       sections: [{
