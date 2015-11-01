@@ -76,22 +76,7 @@ var colorIcon="white";
 var cityName = city;
 
 
-//Regarde si il y a une ville
-var noCity="No city found";
-if (lang=="fr") {noCity="Pas de ville";}
-var addCity="Enter a valid city name";
-if (lang=="fr") {addCity="Entrez une ville correcte";}
-var explainCity="Go to the pebble app on your phone and press the configuration button for this app to enter the city. Then start again the app";
-if (lang=="fr") {explainCity="Allez dans l'application Pebble de votre telephone et configurer l'application meteo. Relancez ensuite l'appication";}
 
-var card_settings=new UI.Card({
-  title : noCity,
-  body : explainCity
-});
-
-if (city.length<2 || typeof city == 'undefined') {
-  card_settings.show();
-}
 
 //Light.on();
 // Create a Card with title and subtitle
@@ -138,6 +123,7 @@ var card_settings=new UI.Card({
 
 if (city.length<2 || typeof city == 'undefined') {
   card_settings.show();
+  card.hide();
 }
 
 ajax(
@@ -391,12 +377,12 @@ ajax(
       highlightBackgroundColor: 'blue',
       highlightTextColor: 'white',
       sections: [{
-        title: 'Meteo Alex',
+        title: cityReturned+","+countryReturned,
         items: menuItems
       }]
     });
     
-    resultsMenu.show();
+    win1.show();
 
     
     win1.on('click', 'select', function(e) {

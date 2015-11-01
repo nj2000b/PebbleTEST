@@ -30,21 +30,6 @@
                 "type": "font"
             },
             {
-                "file": "images/11d.png",
-                "name": "IMAGES_11D_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/10d.png",
-                "name": "IMAGES_10D_PNG",
-                "type": "png"
-            },
-            {
-                "file": "images/09d.png",
-                "name": "IMAGES_09D_PNG",
-                "type": "png"
-            },
-            {
                 "file": "images/04d.png",
                 "name": "IMAGES_04D_PNG",
                 "type": "png"
@@ -57,6 +42,21 @@
             {
                 "file": "images/02d.png",
                 "name": "IMAGES_02D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/11d.png",
+                "name": "IMAGES_11D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/10d.png",
+                "name": "IMAGES_10D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/09d.png",
+                "name": "IMAGES_09D_PNG",
                 "type": "png"
             },
             {
