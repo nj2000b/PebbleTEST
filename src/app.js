@@ -3,6 +3,13 @@ var city=localStorage.getItem('city');
 var tempUnit=localStorage.getItem('temp');
 var lang=localStorage.getItem('lang');
 
+// UNCOMMMNET TO RUN TH EEMULATOR :
+//city="washinghton";
+//tempUnit="cel";
+//lang="en";
+// END UNCOMMENT
+
+
 console.log("VILLE AVANT"+city);
 if (typeof city != 'undefined' && city !==null){
   city=city.replace(/\s/g,"");
@@ -87,7 +94,7 @@ var cityName = city;
 var loading="loading...";
 if (lang=="fr") {loading="chargement...";}
 var card = new UI.Card({
-  title:'METEO Alex',
+  title:'METEO CLEAR',
   subtitle:loading
 });
 
@@ -95,6 +102,11 @@ var win1 = new UI.Window({
   fullscreen: true, 
   scrollable: true,
   backgroundColor: 'white',
+});
+
+
+win1.each(function(element) {
+ win1.remove(element);
 });
 
 var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
@@ -151,16 +163,14 @@ ajax(
   var rainMax=0;
   var minTemp=500;
   var maxTemp=-500;
-  console.log("Rentree dans la boucle");
+  console.log("Rentree dans la boucle de traitement des donnees");
   for (var i=0;i<nb_info;i++)
     {  
-      console.log("TEMP EST EN :"+tempUnit);
       var temp_tmp=data.list[i].main.temp-273.15;
       if (tempUnit == "fah") {temp_tmp=temp_tmp*1.8+32;}
-      if (tempUnit == "fah") {console.log("FAHRENEIT");}
-      if (tempUnit == "cel") {console.log("CELSIUS");}
+     // if (tempUnit == "fah") {console.log("FAHRENEIT");}
+     // if (tempUnit == "cel") {console.log("CELSIUS");}
       temp.push(Math.round(temp_tmp*10)/10);
-    //  temp.push(Math.round((data.list[i].main.temp-273.15)*10)/10);
       // Caclucl min et max temp
       if (temp[i]>maxTemp) {maxTemp=temp[i];}
       if (temp[i]<minTemp) {minTemp=temp[i];}
@@ -173,15 +183,13 @@ ajax(
           }
         }      
       if (rainTmp>rainMax) {rainMax=rainTmp;}
-      console.log("  rain=..."+rainTmp);
       rain.push(rainTmp); 
-      console.log("  rain FINISHED");
       var dateunix = data.list[i].dt;
       dateunix = data.list[i].dt;
       var dateOK = new Date(dateunix*1000);
       time.push(dateOK.getHours()) ;
       jour.push(weekday[dateOK.getDay()]);
-      card.subtitle("METEO ALEX");
+     // card.subtitle("METEO ALEX");
       // CREATION DU MENU
       var icnTemps2=data.list[i].weather[0].icon.substring(0,2)+'d';
       var pluie="No rain";
@@ -245,7 +253,7 @@ ajax(
   for ( i=0;i<nb_info;i++)
       {
         // CREATION DE LA FENETRE
-        
+        console.log("creation point :"+i);
         // Texte heure
         var txtTime=time[i]+"h00";
         var varBold="";
@@ -271,7 +279,6 @@ ajax(
         varBold="";
         //texte Temperature
         posTempX=Math.round((temp[i]-minTemp)/(maxTemp-minTemp)*40);
-        console.log("POSTEMPX="+posTempX);
         var xTemp = new UI.Text({
         position: new Vector2(maxX-30, posTempY+shiftY),
         size: new Vector2(30, 10),
@@ -299,13 +306,13 @@ ajax(
        
         // Icone Temps
         var icnTemps=data.list[i].weather[0].icon.substring(0,2)+'d';
+        console.log("ICONE :"+icnTemps);
         var imgRain16 = new UI.Image({
         position: new Vector2(57,posTempY+shiftY+5),
         size: new Vector2(16,16),
         borderColor: colorIcon,
         image: 'images/'+icnTemps+'.png',
         });
-        console.log("image :"+icnTemps);
         
         //rectangle de la Pluie
         var valRain=0;
@@ -324,7 +331,6 @@ ajax(
             backgroundColor: 'blue'
             });
             win1.add(rectPluie);
-            console.log("VAL RAIN="+Math.ceil(valRain*10));
            
             // Texte de la Pluie
            if (valRain===0) {valRain=" <0.05";}
@@ -370,9 +376,13 @@ ajax(
       
       posTempX =0; 
       posTempY += tailleLigne;
+      console.log(".. fin creation point :"+i);
       } // Fin du for
+      
+    console.log("Sortie de la boucle de creation de donnee"+i);
 
-    card.hide();
+    //card.hide();
+    console.log("...REP1");
 
     // Construct Menu to show to user
     var menuItems = items;
@@ -385,8 +395,20 @@ ajax(
         items: menuItems
       }]
     });
+        console.log("...REP2");
+
+        win1.show();
+     //   resultsMenu.show();
+
+    console.log("...REP3");
     
-    win1.show();
+
+   // resultsMenu.show();
+        console.log("...REP4");
+
+    card.hide();
+    console.log("...REP5");
+
 
     
     win1.on('click', 'select', function(e) {

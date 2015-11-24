@@ -30,6 +30,16 @@
                 "type": "font"
             },
             {
+                "file": "images/50d.png",
+                "name": "IMAGES_50D_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/13d.png",
+                "name": "IMAGES_13D_PNG",
+                "type": "png"
+            },
+            {
                 "file": "images/04d.png",
                 "name": "IMAGES_04D_PNG",
                 "type": "png"
