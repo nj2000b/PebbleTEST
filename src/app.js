@@ -74,8 +74,16 @@ var ajax = require('ajax');
 var Vector2 = require('vector2');
 //var Light = require('ui/light');
 
-var colorTemp="orange";
+/*
+var colorTemp="red";
 var colorRain="blue";
+var colorSnow="purple";
+var colorTime="black";
+var colorIcon="white";
+*/
+var colorTemp="red";
+var colorRain="blue";
+var colorSnow="magenta";
 var colorTime="black";
 var colorIcon="white";
 
@@ -162,7 +170,9 @@ ajax(
   var jour=[];
   var temp=[];
   var rain=[];
+  var snow=[];
   var rainMax=0;
+  var snowMax=0;
   var minTemp=500;
   var maxTemp=-500;
   console.log("Rentree dans la boucle de traitement des donnees");
@@ -183,9 +193,21 @@ ajax(
           {
           rainTmp = Math.round(data.list[i].rain['3h']*10)/10;
           }
-        }      
+        }  
+
       if (rainTmp>rainMax) {rainMax=rainTmp;}
       rain.push(rainTmp); 
+    // IDEM POUR LA NEIGE
+      var snowTmp="";
+       if (typeof data.list[i].snow != 'undefined') 
+        {
+          if (typeof data.list[i].snow['3h'] != 'undefined') 
+          {
+          snowTmp = Math.round(data.list[i].snow['3h']*10)/10;
+          }
+        }      
+      if (snowTmp>snowMax) {snowMax=snowTmp;}
+      snow.push(snowTmp); 
       var dateunix = data.list[i].dt;
       dateunix = data.list[i].dt;
       var dateOK = new Date(dateunix*1000);
@@ -205,6 +227,7 @@ ajax(
       }
   console.log("MaxTemp="+maxTemp);
   console.log("MinTemp="+minTemp);
+    console.log("snowMax="+snowMax);
 // AJOUT DE L'ENTETE 
 
     
@@ -328,16 +351,18 @@ ajax(
         
         //rectangle de la Pluie
         var valRain=0;
+        var pluieOK=0;
         if (typeof rain[i] != 'number') 
           { 
             valRain=0;} else 
-          {
+          { 
+            pluieOK=1;
             valRain=rain[i];
             //Position texte + barres de RAIN
             var posRainX=(valRain/rainMax)*40+1;
             // BARRE DE LA PLUIE
             var rectPluie=new UI.Rect({
-            position: new Vector2(1+15, posTempY+shiftY-5),
+            position: new Vector2(1+15, posTempY+shiftY-5-posTempYNewDay),
             size: new Vector2(posRainX, 10),
             borderColor: 'blue',
             backgroundColor: 'blue'
@@ -345,9 +370,12 @@ ajax(
             win1.add(rectPluie);
            
             // Texte de la Pluie
-           if (valRain===0) {valRain=" <0.05";}
+           if (valRain===0) 
+             {
+               valRain=" <0.05";
+              }
            var xRain = new UI.Text({
-           position: new Vector2(posRainX+15+2, posTempY+shiftY-10),
+           position: new Vector2(posRainX+15+2, posTempY+shiftY-10-posTempYNewDay),
            size: new Vector2(90, 10),
            font: 'gothic-14',
            text: valRain,
@@ -355,6 +383,36 @@ ajax(
            color: colorRain
            });
            win1.add(xRain);
+          } 
+          //rectangle de la NEIGE
+        var valSnow=0;
+        if (typeof snow[i] != 'number' ) 
+          { 
+            valSnow=0;} else 
+          {
+            valSnow=snow[i];
+            //Position texte + barres de NEIGE
+            var posSnowX=(valSnow/snowMax)*40+1;
+            // BARRE DE LA NEIGE
+            var rectSnow=new UI.Rect({
+            position: new Vector2(1+15, posTempY+shiftY-5-posTempYNewDay),
+            size: new Vector2(posSnowX, 10),
+            borderColor: colorSnow,
+            backgroundColor: colorSnow
+            });
+            if ( pluieOK != 1 ) { win1.add(rectSnow);}
+           
+            // Texte de la NEIGE
+           if (valSnow===0) {valSnow=" <0.05";}
+           var xSnow = new UI.Text({
+           position: new Vector2(posSnowX+15+2, posTempY+shiftY-10-posTempYNewDay),
+           size: new Vector2(90, 10),
+           font: 'gothic-14',
+           text: valSnow,
+           textAlign: 'left',
+           color: colorSnow
+           });
+            if ( pluieOK != 1 ) { win1.add(xSnow);}
 
             }
          // Cercle JOUR/NUIT
