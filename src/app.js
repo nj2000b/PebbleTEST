@@ -83,6 +83,8 @@ var colorIcon="white";
   var shiftY=55;//Shift global en Y pour metre un titre
   var posTempX=0;
   var posTempY=0; 
+  var posTempYNewDay=10;
+
 
 var cityName = city;
 
@@ -257,6 +259,7 @@ ajax(
         // Texte heure
         var txtTime=time[i]+"h00";
         var varBold="";
+        posTempYNewDay=0;
         if (i===0) //prmier element
           {txtTime=jour[i].substring(0,3)+" "+time[i]+"h";
           varBold="-bold";} 
@@ -265,11 +268,14 @@ ajax(
             {
             txtTime=jour[i].substring(0,3)+" "+time[i]+"h";
             varBold="-bold";
+            // Nombre de ligne a sauter quand on change de jour avant et apres le trait
+            posTempYNewDay=2;
+            posTempY+=posTempYNewDay;
             }
           }
         // Texte heure
         var xHeure= new UI.Text({
-        position: new Vector2(2, posTempY+shiftY),
+        position: new Vector2(2, posTempY+shiftY+posTempYNewDay),
         size: new Vector2(90, 10),
         font: 'gothic-18'+varBold,
         text: txtTime,
@@ -279,18 +285,24 @@ ajax(
         varBold="";
         //texte Temperature
         posTempX=Math.round((temp[i]-minTemp)/(maxTemp-minTemp)*40);
+        var tempToDisplay=temp[i];
+        if (tempToDisplay<-10)
+          {
+            tempToDisplay=Math.round(tempToDisplay);
+          }
         var xTemp = new UI.Text({
-        position: new Vector2(maxX-30, posTempY+shiftY),
+        position: new Vector2(maxX-30, posTempY+shiftY+posTempYNewDay),
         size: new Vector2(30, 10),
         font: 'gothic-18-bold',
-        text: temp[i],
+        text: tempToDisplay,
         textAlign: 'right',
         color: colorTemp
         });
+        console.log("temperature="+temp[i]);
         
         // Barre Temperature principale
        var rectTemp=new UI.Rect({
-            position: new Vector2(maxX-28,posTempY+shiftY+7),
+            position: new Vector2(maxX-28,posTempY+shiftY+7+posTempYNewDay),
             size: new Vector2(-posTempX,10),
             borderColor: colorTemp,
             backgroundColor: colorTemp,
@@ -298,7 +310,7 @@ ajax(
         //Barre Temperature secondaire
         var posTempX2=(posTempX+Math.round((temp[i+1]-minTemp)/(maxTemp-minTemp)*40))/2;
         var rectTemp2=new UI.Rect({
-            position: new Vector2(maxX-28,posTempY+shiftY+7+tailleLigne/2+1),
+            position: new Vector2(maxX-28,posTempY+shiftY+7+tailleLigne/2+1+posTempYNewDay),
             size: new Vector2(-posTempX2,10),
             borderColor: colorTemp,
             backgroundColor: colorTemp
@@ -308,7 +320,7 @@ ajax(
         var icnTemps=data.list[i].weather[0].icon.substring(0,2)+'d';
         console.log("ICONE :"+icnTemps);
         var imgRain16 = new UI.Image({
-        position: new Vector2(57,posTempY+shiftY+5),
+        position: new Vector2(57,posTempY+shiftY+5+posTempYNewDay),
         size: new Vector2(16,16),
         borderColor: colorIcon,
         image: 'images/'+icnTemps+'.png',
@@ -349,13 +361,13 @@ ajax(
             var dayNight="white";
             if (time[i]>23||time[i]<9) {dayNight="black";}
             var circleDayNight=new UI.Circle({
-            position: new Vector2(7,posTempY+shiftY-10+10),
+            position: new Vector2(7,posTempY+shiftY-10+10-posTempYNewDay),
             radius: 4,
             borderColor: 'black',
             backgroundColor: dayNight,
             });
             win1.add(circleDayNight);
-            //win1.add(circlePluie);
+
 
 
       win1.add(xTemp);
@@ -371,11 +383,12 @@ ajax(
               size:new Vector2(maxX,2),
               borderColor: 'black',
               backgroundColor: 'black',});
-              win1.add(lineDay);
+            win1.add(lineDay);
+            posTempY+=posTempYNewDay;
             }
       
       posTempX =0; 
-      posTempY += tailleLigne;
+      posTempY=posTempY+tailleLigne;
       console.log(".. fin creation point :"+i);
       } // Fin du for
       
